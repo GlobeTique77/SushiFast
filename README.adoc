@@ -1,6 +1,7 @@
 = SushiFast
 
 *Equipe:* Le nain et l'échelle
+
 * BERTRAND Julien
 * DEMAZEUX Gabriel
 
@@ -18,16 +19,16 @@ Ici on a qu'un seul utilisateur, un serveur, qui se chargera de prendre la comma
 
 image::https://media.discordapp.net/attachments/775368238137606184/918595462704037898/unknown.png[]
 
-SushiFast est le tiers client, c'est l'application angular.+
+SushiFast est le tiers client, c'est l'application angular. +
 SushiAPI est le tiers serveur, c'est l'api fait avec nodeJS qui envoiedes requête à la base de données 
-avant de répondre aux requêtes reçues du client.+
+avant de répondre aux requêtes reçues du client. +
 SushiShop est le tiers base de données, c'est une base de données fait avec MongoDB.
 
 === Diagramme séquentiel des algorithmes mise en oeuvre pour obtenir les informations des plateaux
 
 image::https://cdn.discordapp.com/attachments/775368238137606184/918599961401229322/Diagramme_de_sequence_basique_2.png[]
 
-Dans SushiFast, BoxesComponent affiche les paniers et les demandes à BoxesService.+
+Dans SushiFast, BoxesComponent affiche les paniers et les demandes à BoxesService. +
 BoxesService demande à SushiAPI les paniers, les reçois au format JSON et les renvoit au composant en JSON.
 
 == Requêtes illustrées sur l’API concernant l’ensemble des plateaux
@@ -125,18 +126,18 @@ Mentions relatives à l’utilisation des données personnelles :
 
 -Conformément à la réglementation européenne en vigueur, les Utilisateurs de https://sushifast.com disposent des droits suivants :
 
-droit d'accès (article 15 RGPD) et de rectification (article 16 RGPD), de mise à jour, de complétude des données des Utilisateurs droit de verrouillage ou d’effacement des données des Utilisateurs à caractère personnel (article 17 du RGPD), lorsqu’elles sont inexactes, incomplètes, équivoques, périmées, ou dont la collecte, l'utilisation, la communication ou la conservation est interdite
-droit de retirer à tout moment un consentement (article 13-2c RGPD)
-droit à la limitation du traitement des données des Utilisateurs (article 18 RGPD)
-droit d’opposition au traitement des données des Utilisateurs (article 21 RGPD)
-droit à la portabilité des données que les Utilisateurs auront fournies, lorsque ces données font l’objet de traitements automatisés fondés sur leur consentement ou sur un contrat (article 20 RGPD)
-droit de définir le sort des données des Utilisateurs après leur mort et de choisir à qui https://sushifast.com devra communiquer (ou non) ses données à un tiers qu’ils aura préalablement désigné
+droit d'accès (article 15 RGPD) et de rectification (article 16 RGPD), de mise à jour, de complétude des données des Utilisateurs droit de verrouillage ou d’effacement des données des Utilisateurs à caractère personnel (article 17 du RGPD), lorsqu’elles sont inexactes, incomplètes, équivoques, périmées, ou dont la collecte, l'utilisation, la communication ou la conservation est interdite. +
+droit de retirer à tout moment un consentement (article 13-2c RGPD). +
+droit à la limitation du traitement des données des Utilisateurs (article 18 RGPD). +
+droit d’opposition au traitement des données des Utilisateurs (article 21 RGPD). +
+droit à la portabilité des données que les Utilisateurs auront fournies, lorsque ces données font l’objet de traitements automatisés fondés sur leur consentement ou sur un contrat (article 20 RGPD). +
+droit de définir le sort des données des Utilisateurs après leur mort et de choisir à qui https://sushifast.com devra communiquer (ou non) ses données à un tiers qu’ils aura préalablement désigné. +
 Dès que https://sushifast.com a connaissance du décès d’un Utilisateur et à défaut d’instructions de sa part, https://sushifast.com s’engage à détruire ses données, sauf si leur conservation s’avère nécessaire à des fins probatoires ou pour répondre à une obligation légale.
 
 Si l’Utilisateur souhaite savoir comment https://sushifast.com utilise ses Données Personnelles, demander à les rectifier ou s’oppose à leur traitement, l’Utilisateur peut contacter https://sushifast.com par écrit à l’adresse suivante :
 
-SushiFast – DPO, Demazeux Gabriel
-2bis Rue Edouard Branly 77000 Melun.
+SushiFast – DPO, Demazeux Gabriel +
+2bis Rue Edouard Branly 77000 Melun. +
 Dans ce cas, l’Utilisateur doit indiquer les Données Personnelles qu’il souhaiterait que https://sushifast.com corrige, mette à jour ou supprime, en s’identifiant précisément avec une copie d’une pièce d’identité (carte d’identité ou passeport).
 
 Les demandes de suppression de Données Personnelles seront soumises aux obligations qui sont imposées à https://sushifast.com par la loi, notamment en matière de conservation ou d’archivage des documents. Enfin, les Utilisateurs de https://sushifast.com peuvent déposer une réclamation auprès des autorités de contrôle, et notamment de la CNIL (https://www.cnil.fr/fr/plaintes).
