@@ -11,7 +11,7 @@ https://github.com/GlobeTique77/SushiFast[Github du projet]
 
 === Diagramme des cas d'utilisation
 
-image::https://cdn.discordapp.com/attachments/775368238137606184/919967161630490654/Diagramme_de_cas_dutilisation.png[]
+image::https://cdn.discordapp.com/attachments/775368238137606184/919983093748752444/Diagramme_de_cas_dutilisation_2.png[]
 
 Ici on a qu'un seul utilisateur, un serveur, qui se chargera de prendre la commande de différents clients.
 
