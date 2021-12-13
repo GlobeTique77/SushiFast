@@ -11,85 +11,25 @@ https://github.com/GlobeTique77/SushiFast[Github du projet]
 
 === Diagramme des cas d'utilisation
 
-image::https://cdn.discordapp.com/attachments/775368238137606184/917694773081563156/unknown.png[]
+image::https://cdn.discordapp.com/attachments/775368238137606184/919967161630490654/Diagramme_de_cas_dutilisation.png[]
 
 Ici on a qu'un seul utilisateur, un serveur, qui se chargera de prendre la commande de différents clients.
 
 === Diagramme des différents tiers
 
-image::https://media.discordapp.net/attachments/775368238137606184/918595462704037898/unknown.png[]
+image::https://cdn.discordapp.com/attachments/775368238137606184/919968595985960970/unknown.png[]
 
 SushiFast est le tiers client, c'est l'application angular. +
 SushiAPI est le tiers serveur, c'est l'api fait avec nodeJS qui envoiedes requête à la base de données 
 avant de répondre aux requêtes reçues du client. +
 SushiShop est le tiers base de données, c'est une base de données fait avec MongoDB.
 
-=== Diagramme séquentiel des algorithmes mise en oeuvre pour obtenir les informations des plateaux
+=== Diagramme séquentiel des algorithmes mise en oeuvre pour obtenir les informations des plateaux (Requêtes illustrées sur l’API concernant l’ensemble des plateaux)
 
 image::https://cdn.discordapp.com/attachments/775368238137606184/918599961401229322/Diagramme_de_sequence_basique_2.png[]
 
 Dans SushiFast, BoxesComponent affiche les paniers et les demandes à BoxesService. +
 BoxesService demande à SushiAPI les paniers, les reçois au format JSON et les renvoit au composant en JSON.
-
-== Requêtes illustrées sur l’API concernant l’ensemble des plateaux
-
-Dans SushiFast:
-
-boxes.component.ts:
-
-----
-fetchBoxes() {
-   return this.BoxesService.getBoxes().subscribe((data: {}) => {
-      this.boxes = data;
-   })
-}
-----
-Cette fonctions permet d'utiliser la fonction getBoxes() de BoxesService pour mettre les paniers dans la variables 
-boxes qui est un tableau de panier.
-
-boxes.service.ts:
-
-----
-const urlrest = 'http://localhost:3000';
-
-getBoxes(): Observable<any> {
-   return this.http.get<Boxe>(urlrest + '/boxes').pipe(
-      catchError(this.handleError)
-   );
-}
-
-getBoxe(id: string): Observable<any> {
-   return this.http.get<Boxe>(urlrest + '/boxes' + id).pipe(
-      catchError(this.handleError)
-   );
-} 
-----
-Ces fonctions font des requête http vers SushiAPI pour obtenir un ou plusieur paniers.
-
-Dans SushiAPI:
-
-boxes.js:
-
-----
-// Retourne tous les plateaux
-router.get('/', function(req, res, next) {
-   var db = req.db;
-   var collection = db.get('boxes');
-   collection.find({},function(e,listeBoxes) {
-      res.send(listeBoxes);
-    });
-});
-
-// Affichage d'un plateau
-router.get('/:id', (req, res) => {
-   var db = req.db;
-   var collection = db.get('boxes');
-      let { id } = req.params;
-   collection.find({"id":id},function(e,unBoxe) {
-      res.send(unBoxe);
-   });
-});
-----
 
 == RGPD
 
