@@ -54,7 +54,7 @@ BoxesService demande à SushiAPI les paniers, les reçois au format JSON et les 
 	mail: demazeux.gabriel@gmail.com +
 	tel: 0600000002
 
--Dans un contexte en ligne, la collecte des données (ici le nom du client) est utilisée afin que quand le client soit identifié lorsqu'il vient chercher et payer sa commande. +
+-Dans un contexte en ligne, la collecte des données (ici le nom du client) est utilisée afin que le client soit identifié lorsqu'il vient chercher et payer sa commande. +
 (SushiFast ne fait pas de livraison mais accepte les commandes en ligne qui sont à récupérer au restaurant)
  Cette donnée est sauvegardée pendant 12 mois maximum (année fiscal) pour les comptes de SushiFast.
 
