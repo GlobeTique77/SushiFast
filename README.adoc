@@ -17,7 +17,7 @@ Ici on a qu'un seul utilisateur, un serveur, qui se chargera de prendre la comma
 
 === Diagramme des différents tiers
 
-image::https://cdn.discordapp.com/attachments/775368238137606184/919968595985960970/unknown.png[]
+image::https://cdn.discordapp.com/attachments/775368238137606184/920305711089586186/unknown.png[]
 
 SushiFast est le tiers client, c'est l'application angular. +
 SushiAPI est le tiers serveur, c'est l'api fait avec nodeJS qui envoiedes requête à la base de données 
