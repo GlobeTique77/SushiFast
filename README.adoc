@@ -26,34 +26,36 @@ SushiShop est le tiers base de données, c'est une base de données fait avec Mo
 
 === Diagramme séquentiel des algorithmes mise en oeuvre pour obtenir les informations des plateaux (Requêtes illustrées sur l’API concernant l’ensemble des plateaux)
 
-image::https://cdn.discordapp.com/attachments/775368238137606184/918599961401229322/Diagramme_de_sequence_basique_2.png[]
+image::https://cdn.discordapp.com/attachments/775368238137606184/920247373735817256/Diagramme_de_sequence_basique_3.png[]
 
-Dans SushiFast, BoxesComponent affiche les paniers et les demandes à BoxesService. +
+Dans SushiFast, BoxesComponent demande les paniers à BoxesService puis les affiches. +
 BoxesService demande à SushiAPI les paniers, les reçois au format JSON et les renvoit au composant en JSON.
 
 == RGPD
 
-Mentions légales: 
+=== Mentions légales: 
 
--L'entreprise: SARL SushiFast, n°SIRET: 00000000000001
+-L'entreprise: SARL SushiFast +
+ n°SIRET: 00000000000001
 
 -Adresse de SushiFast: 2bis Rue Edouard Branly, 77000, Melun.
 
--Informations de contact: 
-	mail: julien.bertrand07032002@gmail.com
+-Informations de contact: +
+	mail: julien.bertrand07032002@gmail.com +
 	tel: 0600000001
 
 -Directeur de publication: Bertrand Julien
 
 -Hébergeur: SushiFast est son propre hébergeur.
 
-Mentions relatives à l’utilisation des données personnelles :
+=== Mentions relatives à l’utilisation des données personnelles :
 
--Le délégue à la protection des données: Demazeux Gabriel
-	mail: demazeux.gabriel@gmail.com
+-Le délégue à la protection des données: Demazeux Gabriel +
+	mail: demazeux.gabriel@gmail.com +
 	tel: 0600000002
 
--La collecte des données (ici le nom du client) est utilisée afin que le serveur serve la commande au bon client.
+-Dans un contexte en ligne, la collecte des données (ici le nom du client) est utilisée afin que quand le client soit identifié lorsqu'il vient chercher et payer sa commande. +
+(SushiFast ne fait pas de livraison mais accepte les commandes en ligne qui sont à récupérer au restaurant)
  Cette donnée est sauvegardée pendant 12 mois maximum (année fiscal) pour les comptes de SushiFast.
 
 -Il est donc obligatoire dans le formulaire de commande de renseigner le nom du client.
