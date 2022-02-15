@@ -1,0 +1,106 @@
+= SushiFast
+
+*Equipe:* Le nain et l'échelle
+
+* BERTRAND Julien
+* DEMAZEUX Gabriel
+
+https://github.com/GlobeTique77/SushiFast[Github du projet]
+
+== Diagrammes
+
+=== Diagramme des cas d'utilisation
+
+image::https://cdn.discordapp.com/attachments/775368238137606184/919983093748752444/Diagramme_de_cas_dutilisation_2.png[]
+
+Ici on a qu'un seul utilisateur, un serveur, qui se chargera de prendre la commande de différents clients.
+
+=== Diagramme des différents tiers
+
+image::https://cdn.discordapp.com/attachments/775368238137606184/920305711089586186/unknown.png[]
+
+SushiFast est le tiers client, c'est l'application angular. +
+SushiAPI est le tiers serveur, c'est l'api fait avec nodeJS qui envoiedes requête à la base de données 
+avant de répondre aux requêtes reçues du client. +
+SushiShop est le tiers base de données, c'est une base de données fait avec MongoDB.
+
+=== Diagramme séquentiel des algorithmes mise en oeuvre pour obtenir les informations des plateaux (Requêtes illustrées sur l’API concernant l’ensemble des plateaux)
+
+image::https://cdn.discordapp.com/attachments/775368238137606184/920247373735817256/Diagramme_de_sequence_basique_3.png[]
+
+Dans SushiFast, BoxesComponent demande les paniers à BoxesService puis les affiches. +
+BoxesService demande à SushiAPI les paniers, les reçois au format JSON et les renvoit au composant en JSON.
+
+== RGPD
+
+=== Mentions légales: 
+
+-L'entreprise: SARL SushiFast +
+ n°SIRET: 00000000000001
+
+-Adresse de SushiFast: 2bis Rue Edouard Branly, 77000, Melun.
+
+-Informations de contact: +
+	mail: julien.bertrand07032002@gmail.com +
+	tel: 0600000001
+
+-Directeur de publication: Bertrand Julien
+
+-Hébergeur: SushiFast est son propre hébergeur.
+
+=== Mentions relatives à l’utilisation des données personnelles :
+
+-Le délégue à la protection des données: Demazeux Gabriel +
+	mail: demazeux.gabriel@gmail.com +
+	tel: 0600000002
+
+-Dans un contexte en ligne, la collecte des données (ici le nom du client) est utilisée afin que le client soit identifié lorsqu'il vient chercher et payer sa commande. +
+(SushiFast ne fait pas de livraison mais accepte les commandes en ligne qui sont à récupérer au restaurant)
+ Cette donnée est sauvegardée pendant 12 mois maximum (année fiscal) pour les comptes de SushiFast.
+
+-Il est donc obligatoire dans le formulaire de commande de renseigner le nom du client.
+
+-Le destinataire de ces données est uniquement SushiFast.
+
+-Il n'y a aucun cookie qui sera enregistré.
+
+-Lors d'un passage d'une commande, le client a forcément donné son consentement pour renseigner son nom.
+
+-Conformément à la réglementation européenne en vigueur, les Utilisateurs de https://sushifast.com disposent des droits suivants :
+
+droit d'accès (article 15 RGPD) et de rectification (article 16 RGPD), de mise à jour, de complétude des données des Utilisateurs droit de verrouillage ou d’effacement des données des Utilisateurs à caractère personnel (article 17 du RGPD), lorsqu’elles sont inexactes, incomplètes, équivoques, périmées, ou dont la collecte, l'utilisation, la communication ou la conservation est interdite. +
+droit de retirer à tout moment un consentement (article 13-2c RGPD). +
+droit à la limitation du traitement des données des Utilisateurs (article 18 RGPD). +
+droit d’opposition au traitement des données des Utilisateurs (article 21 RGPD). +
+droit à la portabilité des données que les Utilisateurs auront fournies, lorsque ces données font l’objet de traitements automatisés fondés sur leur consentement ou sur un contrat (article 20 RGPD). +
+droit de définir le sort des données des Utilisateurs après leur mort et de choisir à qui https://sushifast.com devra communiquer (ou non) ses données à un tiers qu’ils aura préalablement désigné. +
+Dès que https://sushifast.com a connaissance du décès d’un Utilisateur et à défaut d’instructions de sa part, https://sushifast.com s’engage à détruire ses données, sauf si leur conservation s’avère nécessaire à des fins probatoires ou pour répondre à une obligation légale.
+
+Si l’Utilisateur souhaite savoir comment https://sushifast.com utilise ses Données Personnelles, demander à les rectifier ou s’oppose à leur traitement, l’Utilisateur peut contacter https://sushifast.com par écrit à l’adresse suivante :
+
+SushiFast – DPO, Demazeux Gabriel +
+2bis Rue Edouard Branly 77000 Melun. +
+Dans ce cas, l’Utilisateur doit indiquer les Données Personnelles qu’il souhaiterait que https://sushifast.com corrige, mette à jour ou supprime, en s’identifiant précisément avec une copie d’une pièce d’identité (carte d’identité ou passeport).
+
+Les demandes de suppression de Données Personnelles seront soumises aux obligations qui sont imposées à https://sushifast.com par la loi, notamment en matière de conservation ou d’archivage des documents. Enfin, les Utilisateurs de https://sushifast.com peuvent déposer une réclamation auprès des autorités de contrôle, et notamment de la CNIL (https://www.cnil.fr/fr/plaintes).
+
+== Structure JSON (interface ts) des commandes dans le localstorage
+
+----
+interface BoxesCommande {
+    nom: string,
+    quantite: number,
+    prix: number
+}
+
+export interface Commande {
+    client: string,
+    composition: BoxeCommande[],
+    prixTotal: number
+}
+----
+La commande a le nom du client qui l'a commandé pour qu'elle soit reconnaissable.
+Ensuite elle contient un tableau de BoxesCommande (les plateaux qui composent la commande avec leur nom, 
+la quantité d'un type de panier et le prix total du type de panier)
+Et pour finir le prix total de la commande.
+
