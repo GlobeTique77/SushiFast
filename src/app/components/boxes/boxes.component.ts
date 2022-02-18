@@ -3,6 +3,7 @@ import { Boxe } from 'src/app/model/interfaces/boxe';
 import { SushiService } from 'src/app/service/sushi/sushi.service';
 import { LigneCommande } from 'src/app/classes/ligne-commande';
 import { FormControl, FormGroup } from '@angular/forms';
+import { Commande, BoxeCommande } from 'src/app/classes/commande';
 
 
 
@@ -28,7 +29,10 @@ export class BoxesComponent implements OnInit {
   };
 
   commandes: LigneCommande[];
+  allCommandes: Commande[];
   totalCommande: number = 0.0;
+  boxesCommandees = Array();
+  boxeCommande: BoxeCommande[];
 
   showModal: boolean = false;
   commandeForm!: FormGroup;
@@ -36,7 +40,8 @@ export class BoxesComponent implements OnInit {
 
   constructor(public sushiService: SushiService) {
     this.commandes = [];
-
+    this.boxeCommande = [];
+    this.allCommandes = JSON.parse(String(localStorage.getItem("Commandes") || '[]'));
   }
 
   ngOnInit() {
@@ -117,7 +122,19 @@ export class BoxesComponent implements OnInit {
   }
 
   commander() {
-    console.log('Client:', this.commandeForm.value);
+    for (let i = 0; i < this.commandes.length; i++) {
+      this.boxesCommandees.push(new BoxeCommande(this.commandes[i].nomPlateau, this.commandes[i].quantite, this.commandes[i].prix));
+    }
+    let uneCommande = new Commande(this.commandeForm.value.client, this.boxesCommandees, this.totalCommande, false, false)
+
+    
+    this.allCommandes.push(uneCommande);
+    this.commandes = [];
+    this.boxesCommandees = [];
+    this.totalCommande = 0;
+    this.commandeForm.value.client = '';
+    let tabItems = JSON.stringify(this.allCommandes);
+    localStorage.setItem('Commandes', tabItems);
   }
 
 }

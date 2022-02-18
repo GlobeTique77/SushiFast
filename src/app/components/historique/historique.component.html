@@ -1,1 +1,47 @@
-<p>historique works!</p>
+<section class="section">
+    <div class="container">
+        <div fxflex.gt-xs="30%">
+            <h1 class="title is-3">Historique des commandes</h1>
+
+
+            <div fxLayout="row wrap">
+                <div fxFlex.gt-xs="26%" *ngFor="let commande of allCommandes; let index = index">
+                    <hr>
+                    <div class="has-text-centered">
+                        <h1 class="title is-3">{{commande['client']}}</h1>
+                    </div>
+
+                    <div class="bouton">
+                        <button class="button is-light" (click)="delete(index)">Supprimer</button>&nbsp;
+                        <button class="button is-light" >{{commande['prixTotal']}}€</button>&nbsp;
+                        <button class="button is-light" (click)="affModal(index)">Détails</button>
+                    </div>
+                </div>
+
+                <div class="boxe" *ngIf="commandeVide">
+                    <hr>
+                    <p>Aucune commande n'a été prise.</p>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="modal is-active" *ngIf="showModal">
+            <div class="detail">
+                <div class="modal-background"></div>
+                <div class="modal-content">
+                    <h1 class="title is-3" style="color:azure;">Commande {{nomClient}}</h1>
+                    <div style="color:yellow;" *ngFor="let detail of detailsCommande">
+                        <p>{{detail['quantite']}} {{detail['nom']}}</p>
+                    </div>
+                    <p style="color:yellow;">Prix: {{prixCommande}}€</p>
+                    <br>
+                    <button class="button is-primary" (click)="affModal(0)">Fermer</button>
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+</section>
