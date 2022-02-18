@@ -1,7 +1,8 @@
 export class LigneCommande {
     constructor(
-        public id: number,
+        public image: string,
         public nomPlateau: string,
-        public quantite: number
+        public quantite: number,
+        public prix: number
     ) { }
 }

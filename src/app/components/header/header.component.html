@@ -1,1 +1,23 @@
-<p>header works!</p>
+<nav class="navbar" role="navigation" aria-label="main navigation" style="background-color:black;">
+    <div class="navbar-brand">
+      <h1 class="title is-1" style="margin-left:30px; color: white;">SushiFast</h1>
+    </div>
+  
+    <div id="menu" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item">
+          <div class="buttons">
+            <a [routerLink]="['/']" class="button is-light" style="background-color: black; color: white">
+              Commande
+            </a>
+            <a [routerLink]="['/historique']" class="button is-light" style="background-color: black; color: white">
+              Historique
+            </a>
+            <a [routerLink]="['/rgpd']" class="button is-light" style="background-color: black; color: white">
+                RGPD
+              </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Boxe } from 'src/app/model/interfaces/boxe';
 import { SushiService } from 'src/app/service/sushi/sushi.service';
 import { LigneCommande } from 'src/app/classes/ligne-commande';
+import { FormControl, FormGroup } from '@angular/forms';
 
 
 
@@ -16,7 +17,7 @@ export class BoxesComponent implements OnInit {
   title = 'sushifast';
   boxes: any = [];
 
-  boxe: any = {
+  boxe: Boxe = {
     id: 0,
     nom: '',
     pieces: 0,
@@ -25,11 +26,13 @@ export class BoxesComponent implements OnInit {
     prix: 0.0,
     image: ''
   };
- 
+
   commandes: LigneCommande[];
   totalCommande: number = 0.0;
 
   showModal: boolean = false;
+  commandeForm!: FormGroup;
+
 
   constructor(public sushiService: SushiService) {
     this.commandes = [];
@@ -38,6 +41,10 @@ export class BoxesComponent implements OnInit {
 
   ngOnInit() {
     this.fetchBoxes()
+    this.commandeForm = new FormGroup({
+      client: new FormControl(),
+      });
+     
   }
 
   fetchBoxes() {
@@ -49,13 +56,51 @@ export class BoxesComponent implements OnInit {
 
   plus(index: number) {
     // Exemple d'affectation
-    let uneLigne = new LigneCommande(1, this.boxes[index].nom, 3);
-    this.commandes.push(uneLigne);
-    console.log("Plus :" + index + this.boxes[index].nom);
+    // let uneLigne = new LigneCommande(this.boxes[index].image, this.boxes[index].nom, 1, this.boxes[index].prix);
+    // this.commandes.push(uneLigne);
+    // console.log("Plus :" + index + this.boxes[index].nom);
 
+    const nomsBoxesCommandees = this.commandes.map(value => value.nomPlateau);
+    const panier: any | Map<string, number> = new Map();
+    nomsBoxesCommandees.forEach(nomBoxeCommandee => (panier.set(nomBoxeCommandee, (panier.get(nomBoxeCommandee) || 0) + 1)))
+    if (panier.get(this.boxes[index].nom) == 1) {
+      for (let i = 0; i < this.commandes.length; i++) {
+        if (this.commandes[i].nomPlateau == this.boxes[index].nom) {
+          this.commandes[i].quantite++;
+          this.commandes[i].prix = this.commandes[i].quantite * this.boxes[index].prix;
+          this.commandes[i].prix = Math.round(1000 * this.commandes[i].prix) / 1000;
+        }
+      }
+    }
+    else {
+      // let numCommande = Math.floor(Math.random() * (99 + 1));
+      let uneLigne = new LigneCommande(this.boxes[index].image, this.boxes[index].nom, 1, this.boxes[index].prix);
+      this.commandes.push(uneLigne);
+    }
+    this.totalCommande = (this.totalCommande + this.boxes[index].prix);
+    this.totalCommande = Math.round(1000 * this.totalCommande) / 1000;
   }
 
   moins(index: number) {
+    const nomsBoxesCommandees = this.commandes.map(value => value.nomPlateau);
+    const panier: any | Map<string, number> = new Map();
+    nomsBoxesCommandees.forEach(nomBoxeCommandee => (panier.set(nomBoxeCommandee, (panier.get(nomBoxeCommandee) || 0) + 1)))
+    if (panier.get(this.boxes[index].nom) == 1) {
+      for (let i = 0; i < this.commandes.length; i++) {
+        if (this.commandes[i].nomPlateau == this.boxes[index].nom && this.commandes[i].quantite > 0) {
+          this.commandes[i].quantite--;
+          this.commandes[i].prix = this.commandes[i].quantite * this.boxes[index].prix;
+          this.commandes[i].prix = Math.round(1000 * this.commandes[i].prix) / 1000;
+        }
+        console.log(this.commandes);
+        if (this.commandes[i].quantite == 0) {
+          this.commandes.splice(i, 1);
+        }
+        console.log(this.commandes);
+      }
+      this.totalCommande = this.totalCommande - this.boxes[index].prix;
+      this.totalCommande = Math.round(1000 * this.totalCommande) / 1000;
+    }
     console.log("Moins :" + index);
   }
 
@@ -63,11 +108,16 @@ export class BoxesComponent implements OnInit {
     if (this.showModal) {
       this.showModal = false;
     } else {
-      console.log("Modal indice :" + i);    
+      console.log("Modal indice :" + i);
       console.log("Modal nom plateau :" + this.boxes[i].nom);
       this.boxe = this.boxes[i];
       this.showModal = true;
+      // console.log(this.showModal);
     }
+  }
+
+  commander() {
+    console.log('Client:', this.commandeForm.value);
   }
 
 }
