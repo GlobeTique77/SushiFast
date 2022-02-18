@@ -10,6 +10,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { HistoriqueComponent } from './components/historique/historique.component';
 import { RgpdComponent } from './components/rgpd/rgpd.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { FooterComponent } from './components/footer/footer.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     HeaderComponent,
     BoxesComponent,
     HistoriqueComponent,
-    RgpdComponent
+    RgpdComponent,
+    FooterComponent
   ],
   imports: [
     BrowserModule,
