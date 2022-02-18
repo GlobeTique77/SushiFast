@@ -5,6 +5,8 @@
 * BERTRAND Julien
 * DEMAZEUX Gabriel
 
+18/02/2022
+
 https://github.com/GlobeTique77/SushiFast[Github du projet]
 
 == Contexte
@@ -162,7 +164,7 @@ export class SushiService {
 ----
 
 C'est le code légèrement modifié du TD CRUD de M.Chamillard. +
-On immporte l'interface Boxe et GlobalConstants pour sushiAPI qui contient le lien vers l'API. +
+On importe l'interface Boxe et GlobalConstants pour sushiAPI qui contient le lien vers l'API. +
 Pour récupérer les boxes, on envoie des requêtes HTML avec la fonction getBoxes() pour récupérer des objets de type Boxe. +
 Les interfaces Boxe et Ingrédient:
 ----
@@ -352,8 +354,10 @@ Voici le code qui affiche les boxes dans le boxes.component.html et son UI:
     </div>
 </div>
 ----
-(METTRE LE SCREEN DE L'UI). +
-On utilise le module Flex-layout pour bien placé les différentes boxes et la commande ainsi que Bulma pour rendre l'interface plus jolie. +
+
+image::https://cdn.discordapp.com/attachments/775368238137606184/944251011286052924/unknown.png[]
+
+On utilise le module Flex-layout pour bien placer les différentes boxes et la commande ainsi que Bulma pour rendre l'interface plus jolie. +
 Pour afficher chaque boxe, on fait un ngFor du tableau boxes pour répeter le code qui suit plusieurs fois pour afficher les plateaux et un index qui est pratique pour des fonctions que nous verrons plus tard. +
 Ainsi, nous pouvons afficher le nom et l'image de chaque boxe de sushi. +
 
@@ -416,18 +420,18 @@ Comme showModal est true, le test réussi et affiche donc les détails de la box
 Cependant, pour afficher la composition, on doit refaire un ngFor comme c'est un tableau d'objets. +
 
 Voici ce que donne l'UI:
-(METTRE SCREEN) +
+
+image::https://cdn.discordapp.com/attachments/775368238137606184/944251383777996860/unknown.png[]
 
 A la fin du modal, il y a un bouton qui active affModal() mais avec comme paramètre 0. +
-Cela permet de réussir le premier id de la fonction comme showModal est true et donc ça le remet en false et ne passe plus le test du ngif. +
+Cela permet de réussir le premier if de la fonction comme showModal est true et donc ça le remet en false et ne passe plus le test du ngif. +
 
 == Le panier
 
-Le panier contient les boxes sélectionnées avec leurs images, leurs noms, la quantité et le prix d'un type de boxe mltiplié par sa quantité. +
+Le panier contient les boxes sélectionnées avec leurs images, leurs noms, la quantité et le prix d'un type de boxe multiplié par sa quantité. +
 Le panier a, à la toute fin, le prix total de la commande et un formulaire demandant le nom du client pour enregistrer la commande à son nom. +
-(METTRE SCREENS UI AVEC PANIER VIDE ET PANIER PLEIN)
 
-Pour remplir le panier, il faut cliquer sur le bouton + se trouvant sous chaque plateau pour appeler la plus(index) qui reprend l'index de la boxe sélectionnées. +
+Pour remplir le panier, il faut cliquer sur le bouton + se trouvant sous chaque plateau pour appeler la méthode plus(index) qui reprend l'index de la boxe sélectionnée. +
 Dans boxes.component.ts:
 ----
 commandes: LigneCommande[];
@@ -466,7 +470,7 @@ export class LigneCommande {
 }
 ----
 On récupère les noms des plateaux de la commande en cours qu'on met dans panier puis on compare le nom de la boxe sélectionnée et on vérifie s'il est déjà dans le panier. +
-Si oui, on cherche dans commandes si le nom d'une ligne est égale au nom de la boxe sélectionnée, si oui on augmante la quantité de un, on recalcule le prix totale de la ligne (suivi d'une commande qui évite un bug d'affichage du prix). +
+Si oui, on cherche dans commandes si le nom d'une ligne est égale au nom de la boxe sélectionnée, si oui on augmente la quantité de un, on recalcule le prix totale de la ligne (suivi d'une commande qui évite un bug d'affichage du prix). +
 Si la boxe n'était pas dans commandes, on crée un nouveau LigneCommande avec les caractéristique souhaité de la boxe sélectionnée qu'on push dans commandes. +
 Après on recalcule le total de la commande. +
 
@@ -536,6 +540,14 @@ boxes.component.html:
                 </div>
             </form>
 ----
+Le panier vide:
+
+image::https://cdn.discordapp.com/attachments/775368238137606184/944251564326010921/unknown.png[]
+
+Le panier avec quelques plateaux:
+
+image::https://cdn.discordapp.com/attachments/775368238137606184/944251672262221854/unknown.png[]
+
 Nous avons encore du flex-layout et bulma pour la mise en page. +
 Le panier est dans un tableau qui pour chaque type de boxe, aura une colonne image, nom, quantité et prix. +
 Pour afficher chaque ligne de la commande, on utilise à nouveau ngFor sur le tableau commandes. +
@@ -665,7 +677,11 @@ export class HistoriqueComponent implements OnInit {
 Dans le ngOnInit(), on parse le json de Commandes qui est dans le localstorage et on le met dans allCommandes. +
 On regarde aussi si le tableau est vide et si oui, on met commandeVide à true. +
 Le UI de l'HTML et le code qui affiche les commandes:
-(METTRE SCREEN)
+
+image::https://cdn.discordapp.com/attachments/775368238137606184/944254776558911528/unknown.png[]
+
+image::https://cdn.discordapp.com/attachments/775368238137606184/944255033535496212/unknown.png[]
+
 ----
 <div fxflex.gt-xs="30%">
             <h1 class="title is-3">Historique des commandes</h1>
@@ -717,6 +733,9 @@ Et voici l'HTML du modal:
 ----
 Lui aussi fonctionne comme celui de Boxes. +
 Les variables contenant la quantité et le nom de chaque boxe qui compose la commande sont cependant différents. +
+Et son UI:
+
+image::https://cdn.discordapp.com/attachments/775368238137606184/944255118805716992/unknown.png[]
 
 == Supprimer une commande
 
@@ -737,3 +756,143 @@ delete(index: number) {
 On remet toutes les commandes dans arrayDataCommande puis on retire celui qui a l'index qui est en paramètre. +
 On met ensuite dans le localstorage arrayDataCommande qui n'a plus la commande supprimée. +
 On actualise allCommandes et on vérifie s'il est égale à 0 pour afficher le message disant qu'il n'y a aucune commande.
+
+== RGPD 
+
+On a crée un component et y avons ajouter le RGPD se trouvant plus haut dans ce README. +
+
+rgpd.component.html:
+----
+<h1 class="title is-3">Mentions légales:</h1>
+<br>
+    <h1 class="title is-5">-L’entreprise:</h1><p> SARL SushiFast <br>
+    n°SIRET: 00000000000001<br>
+    <br>
+    </p>
+    <h1 class="title is-5">-Adresse de SushiFast:</h1><p> 2bis Rue Edouard Branly, 77000, Melun.<br>
+    <br></p>
+    <h1 class="title is-5">-Informations de contact:</h1><p><br>
+    mail: julien.bertrand07032002@gmail.com<br>
+    tel: 0600000001<br>
+    <br></p>
+    <h1 class="title is-5">-Directeur de publication:</h1><p> Bertrand Julien<br>
+    <br></p>
+    <h1 class="title is-5">-Hébergeur:</h1><p> SushiFast est son propre hébergeur.<br>
+    Mentions relatives à l’utilisation des données personnelles :<br>
+    <br></p>
+    <h1 class="title is-5">-Le délégue à la protection des données:</h1><p> Demazeux Gabriel<br>
+    mail: demazeux.gabriel@gmail.com<br>
+    tel: 0600000002<br>
+    <br>
+    -Dans un contexte en ligne, la collecte des données (ici le nom du client) est utilisée afin que le client soit identifié lorsqu’il vient chercher et payer sa commande.<br>
+    (SushiFast ne fait pas de livraison mais accepte les commandes en ligne qui sont à récupérer au restaurant) Cette donnée est sauvegardée pendant 12 mois maximum (année fiscal) pour les comptes de SushiFast.<br>
+    <br>
+    -Il est donc obligatoire dans le formulaire de commande de renseigner le nom du client.<br>
+    <br>
+    -Le destinataire de ces données est uniquement SushiFast.<br>
+    <br>
+    -Il n’y a aucun cookie qui sera enregistré.<br>
+    <br>
+    -Lors d’un passage d’une commande, le client a forcément donné son consentement pour renseigner son nom.<br>
+    <br>
+    -Conformément à la réglementation européenne en vigueur, les Utilisateurs de https://sushifast.com disposent des droits suivants :<br>
+    <br>
+    droit d’accès (article 15 RGPD) et de rectification (article 16 RGPD), de mise à jour, de complétude des données des Utilisateurs droit de verrouillage ou d’effacement des données des Utilisateurs à caractère personnel (article 17 du RGPD), lorsqu’elles sont inexactes, incomplètes, équivoques, périmées, ou dont la collecte, l’utilisation, la communication ou la conservation est interdite.<br>
+    droit de retirer à tout moment un consentement (article 13-2c RGPD).<br>
+    droit à la limitation du traitement des données des Utilisateurs (article 18 RGPD).<br>
+    droit d’opposition au traitement des données des Utilisateurs (article 21 RGPD).<br>
+    droit à la portabilité des données que les Utilisateurs auront fournies, lorsque ces données font l’objet de traitements automatisés fondés sur leur consentement ou sur un contrat (article 20 RGPD).<br>
+    droit de définir le sort des données des Utilisateurs après leur mort et de choisir à qui https://sushifast.com devra communiquer (ou non) ses données à un tiers qu’ils aura préalablement désigné.<br>
+    Dès que https://sushifast.com a connaissance du décès d’un Utilisateur et à défaut d’instructions de sa part, https://sushifast.com s’engage à détruire ses données, sauf si leur conservation s’avère nécessaire à des fins probatoires ou pour répondre à une obligation légale.<br>
+    <br>
+    Si l’Utilisateur souhaite savoir comment https://sushifast.com utilise ses Données Personnelles, demander à les rectifier ou s’oppose à leur traitement, l’Utilisateur peut contacter https://sushifast.com par écrit à l’adresse suivante :<br>
+    <br>
+    SushiFast – DPO, Demazeux Gabriel<br>
+    2bis Rue Edouard Branly 77000 Melun.<br>
+    Dans ce cas, l’Utilisateur doit indiquer les Données Personnelles qu’il souhaiterait que https://sushifast.com corrige, mette à jour ou supprime, en s’identifiant précisément avec une copie d’une pièce d’identité (carte d’identité ou passeport).<br>
+    <br>
+    Les demandes de suppression de Données Personnelles seront soumises aux obligations qui sont imposées à https://sushifast.com par la loi, notamment en matière de conservation ou d’archivage des documents. Enfin, les Utilisateurs de https://sushifast.com peuvent déposer une réclamation auprès des autorités de contrôle, et notamment de la CNIL (https://www.cnil.fr/fr/plaintes).<br>
+    </p>
+----
+Extrait de l'UI: +
+
+image::https://cdn.discordapp.com/attachments/775368238137606184/944281823238836224/unknown.png[]
+
+== Header et footer
+
+Le header nous sert de navbar, en utilisant le le module rooting d'angular. +
+header.component.html et son UI:
+
+image::https://cdn.discordapp.com/attachments/775368238137606184/944297714378747964/unknown.png[]
+
+----
+<nav class="navbar" role="navigation" aria-label="main navigation" style="background-color:#485fc7;">
+    <div class="navbar-brand">
+      <h1 class="title is-1" style="margin-left:30px; color: white;">SushiFast</h1>
+    </div>
+  
+    <div id="menu" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item">
+          <div class="buttons">
+            <a [routerLink]="['/']" class="button is-light" style="background-color: #485fc7; color: white">
+              Commande
+            </a>
+            <a [routerLink]="['/historique']" class="button is-light" style="background-color: #485fc7; color: white">
+              Historique
+            </a>
+            <a [routerLink]="['/rgpd']" class="button is-light" style="background-color: #485fc7; color: white">
+                RGPD
+              </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+----
+On utilise [routerLink]=['un lien'] pour changer l'url. +
+On programme les routes dans app-routing.module.ts:
+----
+const routes: Routes = [
+  { path: '', component: BoxesComponent },
+  { path: 'historique', component: HistoriqueComponent },
+  { path: 'rgpd', component: RgpdComponent }
+];
+----
+Puis dans app.component.html, on met:
+----
+<app-header></app-header>
+<router-outlet></router-outlet>
+<app-footer></app-footer>
+----
+Le premier pour afficher le component header, le deuxième pour afficher un component en fonction du lien et le troisième pour afficher le component footer.+
+Voici le code du footer.component.html:
+----
+<div class="has-text-centered" style="background-color:rgb(72, 95, 199);color:white">
+    <a [routerLink]="['/rgpd']" class="title is-6" style="color:white">Mentions légales</a>
+    <p>Equipe: Le nain et l'échelle</p>
+</div>
+----
+Avec un routerLink qui mène au RGPD. +
+Et pour finir, son UI: 
+
+image::https://cdn.discordapp.com/attachments/775368238137606184/944286417582968882/unknown.png[]
+
+== Evil User Stories
+
+=== Une arnaque
+
+En tant que personne malveillante, je souhaite nuire l'entreprise SushiFast en commandant beaucoup de plateaux par téléphone mais ne pas venir les chercher et ne pas les payer et ainsi faire perdre de l'argent au restaurant. +
+
+En tant que développeur, je vais limiter le nombre de plateaux par commande pour empêcher un utilisateur malveillant de commander énormémant de plateaux pour qu'au final il ne vienne pas les chercher. Pour cela dans la méthode plus(index) de boxes.component.ts, je rajoute un compteur qui augmente à chaque boxe ajoutée. Si le compteur est à 10, il n'est plus possible de rajouter de boxe à la commande (et retirer un au compteur à chaque utilisation de moins(index) ).
+
+=== Illisible 
+
+En tant que personne malveillante, je souhaite désordonner l'historique des commandes en ajoutant des commandes vides, sans nom ou avec un nom avec énormémant de caractères et ainsi désorganiser la vue de l'historique pour les serveurs et la rendre illisible. +
+
+En tant que développeur, je vais obliger pour passer une commande d'avoir au minimum un plateau dans le panier avec un if dans commander() de boxes.component.ts pour vérifier combien il y a de plateau et s'il n'y en a pas de ne pas enregistrer la commande dans le localstorage. J'utilise la même méthode pour vérifier que le nom du client n'est pas vide. Je vais aussi mettre une limite de caractère au nom du client (16 caractères), encore une fois, il suffit d'un if dans commander() puis renseigner un message d'erreur pour chaque cas.
+
+== Conclusion 
+
+On a fait la majorité de la mission même s'ils nous manquent certaines choses comme les tests unitaires, la réalisation des contres mesures des EVS et par exemple modifier l'état d'une commande dans le localstorage comme elles ont comme propriétés booléenne payee et servie. +
+Nous avons mal géré notre temps en ayant mal jugé la dose de travail. 
