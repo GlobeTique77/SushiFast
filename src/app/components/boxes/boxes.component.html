@@ -16,12 +16,12 @@
                         <td><img [src]="'assets/'+elem.image+'.webp'"></td>
                         <td>{{elem.nomPlateau}}</td>
                         <td>{{elem.quantite}}</td>
-                        <td>{{elem.prix}}</td>
+                        <td>{{elem.prix}}€</td>
                     </tr>
                 </tbody>
             </table>
 
-            <div style="font-weight:bold;">Total Commande : {{ totalCommande }}</div>
+            <div style="font-weight:bold;">Total Commande : {{ totalCommande }}€</div>
             <form [formGroup]="commandeForm" (ngSubmit)="commander()">
                 <div class="field">
                     <div class="control">
