@@ -195,7 +195,141 @@ export class GlobalConstants {
 Ce service est utilisé par le composant BoxeComponent comme c'est lui qui s'occupe d'afficher les boxes. +
 BoxesComponents:
 ----
-(mettre le code complété de BoxesComponent)
+import { Component, OnInit } from '@angular/core';
+import { Boxe } from 'src/app/model/interfaces/boxe';
+import { SushiService } from 'src/app/service/sushi/sushi.service';
+import { LigneCommande } from 'src/app/classes/ligne-commande';
+import { FormControl, FormGroup } from '@angular/forms';
+import { Commande, BoxeCommande } from 'src/app/classes/commande';
+
+
+
+@Component({
+  selector: 'app-boxes',
+  templateUrl: './boxes.component.html',
+  styleUrls: ['./boxes.component.css']
+})
+
+export class BoxesComponent implements OnInit {
+
+  title = 'sushifast';
+  boxes: any = [];
+
+  boxe: Boxe = {
+    id: 0,
+    nom: '',
+    pieces: 0,
+    composition: [],
+    saveurs: [],
+    prix: 0.0,
+    image: ''
+  };
+
+  commandes: LigneCommande[];
+  allCommandes: Commande[];
+  totalCommande: number = 0.0;
+  boxesCommandees = Array();
+  boxeCommande: BoxeCommande[];
+
+  showModal: boolean = false;
+  commandeForm!: FormGroup;
+
+
+  constructor(public sushiService: SushiService) {
+    this.commandes = [];
+    this.boxeCommande = [];
+    this.allCommandes = JSON.parse(String(localStorage.getItem("Commandes") || '[]'));
+  }
+
+  ngOnInit() {
+    this.fetchBoxes()
+    this.commandeForm = new FormGroup({
+      client: new FormControl(),
+      });
+     
+  }
+
+  fetchBoxes() {
+    return this.sushiService.getBoxes().subscribe((data: {}) => {
+      this.boxes = data;
+      // console.log(data);
+    })
+  }
+
+  plus(index: number) {
+    const nomsBoxesCommandees = this.commandes.map(value => value.nomPlateau);
+    const panier: any | Map<string, number> = new Map();
+    nomsBoxesCommandees.forEach(nomBoxeCommandee => (panier.set(nomBoxeCommandee, (panier.get(nomBoxeCommandee) || 0) + 1)))
+    if (panier.get(this.boxes[index].nom) == 1) {
+      for (let i = 0; i < this.commandes.length; i++) {
+        if (this.commandes[i].nomPlateau == this.boxes[index].nom) {
+          this.commandes[i].quantite++;
+          this.commandes[i].prix = this.commandes[i].quantite * this.boxes[index].prix;
+          this.commandes[i].prix = Math.round(1000 * this.commandes[i].prix) / 1000;
+        }
+      }
+    }
+    else {
+      let numCommande = Math.floor(Math.random() * (99 + 1));
+      let uneLigne = new LigneCommande(this.boxes[index].image, this.boxes[index].nom, 1, this.boxes[index].prix);
+      this.commandes.push(uneLigne);
+    }
+    this.totalCommande = (this.totalCommande + this.boxes[index].prix);
+    this.totalCommande = Math.round(1000 * this.totalCommande) / 1000;
+  }
+
+  moins(index: number) {
+    const nomsBoxesCommandees = this.commandes.map(value => value.nomPlateau);
+    const panier: any | Map<string, number> = new Map();
+    nomsBoxesCommandees.forEach(nomBoxeCommandee => (panier.set(nomBoxeCommandee, (panier.get(nomBoxeCommandee) || 0) + 1)))
+    if (panier.get(this.boxes[index].nom) == 1) {
+      for (let i = 0; i < this.commandes.length; i++) {
+        if (this.commandes[i].nomPlateau == this.boxes[index].nom && this.commandes[i].quantite > 0) {
+          this.commandes[i].quantite--;
+          this.commandes[i].prix = this.commandes[i].quantite * this.boxes[index].prix;
+          this.commandes[i].prix = Math.round(1000 * this.commandes[i].prix) / 1000;
+        }
+        console.log(this.commandes);
+        if (this.commandes[i].quantite == 0) {
+          this.commandes.splice(i, 1);
+        }
+        console.log(this.commandes);
+      }
+      this.totalCommande = this.totalCommande - this.boxes[index].prix;
+      this.totalCommande = Math.round(1000 * this.totalCommande) / 1000;
+    }
+    console.log("Moins :" + index);
+  }
+
+  affModal(i: number) {
+    if (this.showModal) {
+      this.showModal = false;
+    } else {
+      console.log("Modal indice :" + i);
+      console.log("Modal nom plateau :" + this.boxes[i].nom);
+      this.boxe = this.boxes[i];
+      this.showModal = true;
+      // console.log(this.showModal);
+    }
+  }
+
+  commander() {
+    for (let i = 0; i < this.commandes.length; i++) {
+      this.boxesCommandees.push(new BoxeCommande(this.commandes[i].nomPlateau, this.commandes[i].quantite, this.commandes[i].prix));
+    }
+    let uneCommande = new Commande(this.commandeForm.value.client, this.boxesCommandees, this.totalCommande, false, false)
+
+    
+    this.allCommandes.push(uneCommande);
+    this.commandes = [];
+    this.boxesCommandees = [];
+    this.totalCommande = 0;
+    this.commandeForm.value.client = '';
+    let tabItems = JSON.stringify(this.allCommandes);
+    localStorage.setItem('Commandes', tabItems);
+  }
+
+}
 ----
 Après avoir importé SushiService, on crée un tableau vide: boxes. +
 Ensuite on crée la fonction fetchBoxes() qui appele le service pour envoyer une requête HTTP à l'API pour récupérer les boxes et les mettre dans le tableau boxes. +
@@ -313,7 +447,7 @@ plus(index: number) {
       }
     }
     else {
-      // let numCommande = Math.floor(Math.random() * (99 + 1));
+      let numCommande = Math.floor(Math.random() * (99 + 1));
       let uneLigne = new LigneCommande(this.boxes[index].image, this.boxes[index].nom, 1, this.boxes[index].prix);
       this.commandes.push(uneLigne);
     }
@@ -331,7 +465,10 @@ export class LigneCommande {
     ) { }
 }
 ----
-(EXPLIQUER !!!!)
+On récupère les noms des plateaux de la commande en cours qu'on met dans panier puis on compare le nom de la boxe sélectionnée et on vérifie s'il est déjà dans le panier. +
+Si oui, on cherche dans commandes si le nom d'une ligne est égale au nom de la boxe sélectionnée, si oui on augmante la quantité de un, on recalcule le prix totale de la ligne (suivi d'une commande qui évite un bug d'affichage du prix). +
+Si la boxe n'était pas dans commandes, on crée un nouveau LigneCommande avec les caractéristique souhaité de la boxe sélectionnée qu'on push dans commandes. +
+Après on recalcule le total de la commande. +
 
 Le bouton moins retire un élément du panier ou retire de 1 la quantité d'un élément s'il s'y trouve plusieurs fois. +
 ----
@@ -408,3 +545,195 @@ Et pour finir, un formulaire avec formGroup pour demander le nom du client (c'es
 Quand le serveur appuiera sur le bouton Commander, ça activera la fonction commander() grâce au ngSubmit. +
 Il enregistrera aussi le nom du client dans l'objet FormGroup commandeForm en tant qu'objet FormControl client. +
 La méthode commander() enregistrera la commande avec le nom du client dans le localstorage. +
+
+== Sauvegarde dans le localstorage
+
+En appuyant sur Commander, ça lance la méthode commander() qui enregistre la commande dans le local storage. +
+----
+commandes: LigneCommande[];
+  allCommandes: Commande[];
+  totalCommande: number = 0.0;
+  boxesCommandees = Array();
+  boxeCommande: BoxeCommande[];
+  
+  constructor(public sushiService: SushiService) {
+    this.commandes = [];
+    this.boxeCommande = [];
+    this.allCommandes = JSON.parse(String(localStorage.getItem("Commandes") || '[]'));
+  }
+
+commander() {
+    for (let i = 0; i < this.commandes.length; i++) {
+      this.boxesCommandees.push(new BoxeCommande(this.commandes[i].nomPlateau, this.commandes[i].quantite, this.commandes[i].prix));
+    }
+    let uneCommande = new Commande(this.commandeForm.value.client, this.boxesCommandees, this.totalCommande, false, false)
+
+    
+    this.allCommandes.push(uneCommande);
+    this.commandes = [];
+    this.boxesCommandees = [];
+    this.totalCommande = 0;
+    this.commandeForm.value.client = '';
+    let tabItems = JSON.stringify(this.allCommandes);
+    localStorage.setItem('Commandes', tabItems);
+  }
+----
+
+classe Commande:
+----
+export class Commande {
+    constructor(
+        public client: string,
+        public composition: BoxeCommande[],
+        public prixTotal: number,
+        public servie: boolean,
+        public payee: boolean,
+    ) {} 
+}
+
+export class BoxeCommande {
+    constructor(
+        public nom: string,
+        public quantite: number,
+        public prix: number
+    ) { }
+}
+----
+Pour chaque LigneCommande dans commandes, on crée un BoxeCommande qu'on met dans un tableau boxeCommandees. +
+On crée ensuite une Commande qui reprend le nom du client du formulaire, boxesCommandees, le total de la commande et false, un pour servie (si la commande a été servie) et un pour payee (si la commande a été payée ou non). +
+On met uneCommande dans allCommandes et on rénitialise commandes, boxesCommandes, totalCommande et client de commandeForm. +
+On stringify allCommandes en JSON dans tabItems qu'on met ensuite dans le localstorage avec comme nom: Commandes. +
+
+== Affichage des commandes du localstorage
+
+On a crée un nouveau component, historique. +
+historique.component.ts:
+----
+import { Component, OnInit } from '@angular/core';
+import { LigneCommande } from 'src/app/classes/ligne-commande';
+
+@Component({
+  selector: 'app-historique',
+  templateUrl: './historique.component.html',
+  styleUrls: ['./historique.component.css']
+})
+export class HistoriqueComponent implements OnInit {
+
+  allCommandes = [];
+  detailsCommande = [];
+  showModal: boolean = false;
+  nomClient: string = '';
+  prixCommande: number = 0;
+  commandeVide: boolean = false;
+
+
+
+  ngOnInit(): void {
+    this.allCommandes = JSON.parse(String(localStorage.getItem("Commandes")));
+    console.log(this.allCommandes);
+    if (this.allCommandes.length == 0) {
+      this.commandeVide = true;
+      console.log(this.commandeVide);
+    }
+  }
+
+  delete(index: number) {
+    let arrayDataCommande = JSON.parse(String(localStorage.getItem("Commandes")));
+    //console.log(arrayDataCommande.length);
+    arrayDataCommande.splice(index, 1);
+    localStorage.setItem('Commandes', JSON.stringify(arrayDataCommande));
+    this.allCommandes = arrayDataCommande;
+    if (this.allCommandes.length == 0) {
+      this.commandeVide = true;
+      console.log(this.commandeVide);
+    }
+  }
+
+  affModal(i: number) {
+    if (this.showModal) {
+      this.showModal = false;
+    } else {
+      this.showModal = true;
+      this.detailsCommande = this.allCommandes[i]['composition'];
+      this.nomClient = this.allCommandes[i]['client'];
+      this.prixCommande = this.allCommandes[i]['prixTotal'];
+    }
+  }
+
+}
+----
+Dans le ngOnInit(), on parse le json de Commandes qui est dans le localstorage et on le met dans allCommandes. +
+On regarde aussi si le tableau est vide et si oui, on met commandeVide à true. +
+Le UI de l'HTML et le code qui affiche les commandes:
+(METTRE SCREEN)
+----
+<div fxflex.gt-xs="30%">
+            <h1 class="title is-3">Historique des commandes</h1>
+
+
+            <div fxLayout="row wrap">
+                <div fxFlex.gt-xs="26%" *ngFor="let commande of allCommandes; let index = index">
+                    <hr>
+                    <div class="has-text-centered">
+                        <h1 class="title is-3">{{commande['client']}}</h1>
+                    </div>
+
+                    <div class="bouton">
+                        <button class="button is-light" (click)="delete(index)">Supprimer</button>&nbsp;
+                        <button class="button is-light" >{{commande['prixTotal']}}€</button>&nbsp;
+                        <button class="button is-light" (click)="affModal(index)">Détails</button>
+                    </div>
+                </div>
+
+                <div class="boxe" *ngIf="commandeVide">
+                    <hr>
+                    <p>Aucune commande n'a été prise.</p>
+                </div>
+            </div>
+        </div>
+----
+Avec un ngFor, on affiche les différentes commandes se trouvant dans allCommandes. +
+On affiche juste le nom du client avec {{commande['client']}} et des boutons, un qui supprimera la commande du localstorage avec delete(index), un qui affiche le prix total de la commande et qui activera le modal pour afficher les détails avec affmodal(index). +
+Nous avons ensuite un ngIf qui dit qu'aucune commande n'a été prise si commandeVide est true. +
+
+affmodal(index) marche de la même façon que celui du component Boxes. +
+On met la compostion de la commande, le prix et le nom du client dans des variables. +
+Et voici l'HTML du modal: 
+----
+<div class="modal is-active" *ngIf="showModal">
+            <div class="detail">
+                <div class="modal-background"></div>
+                <div class="modal-content">
+                    <h1 class="title is-3" style="color:azure;">Commande {{nomClient}}</h1>
+                    <div style="color:yellow;" *ngFor="let detail of detailsCommande">
+                        <p>{{detail['quantite']}} {{detail['nom']}}</p>
+                    </div>
+                    <p style="color:yellow;">Prix: {{prixCommande}}€</p>
+                    <br>
+                    <button class="button is-primary" (click)="affModal(0)">Fermer</button>
+                </div>
+            </div>
+        </div>
+----
+Lui aussi fonctionne comme celui de Boxes. +
+Les variables contenant la quantité et le nom de chaque boxe qui compose la commande sont cependant différents. +
+
+== Supprimer une commande
+
+C'est le bouton supprimer qui appele la fonction delete(index). +
+----
+delete(index: number) {
+    let arrayDataCommande = JSON.parse(String(localStorage.getItem("Commandes")));
+    //console.log(arrayDataCommande.length);
+    arrayDataCommande.splice(index, 1);
+    localStorage.setItem('Commandes', JSON.stringify(arrayDataCommande));
+    this.allCommandes = arrayDataCommande;
+    if (this.allCommandes.length == 0) {
+      this.commandeVide = true;
+      console.log(this.commandeVide);
+    }
+  }
+----
+On remet toutes les commandes dans arrayDataCommande puis on retire celui qui a l'index qui est en paramètre. +
+On met ensuite dans le localstorage arrayDataCommande qui n'a plus la commande supprimée. +
+On actualise allCommandes et on vérifie s'il est égale à 0 pour afficher le message disant qu'il n'y a aucune commande.
