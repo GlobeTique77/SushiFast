@@ -7,6 +7,12 @@
 
 https://github.com/GlobeTique77/SushiFast[Github du projet]
 
+== Contexte
+
+SushiFast est une application front-end avec le framework Angular qui répond aux besoins d'un scénario professionnel. Un serveur prend la commande de client sur l'application qui sert aussi de carte des menus (l'application fait appel à une api pour récupérer les différentes boxes). Le serveur met dans le panier les boxes commandées par les clients et note le nom du client avant de finaliser la commande et l'envoyer sur le localstorage. Les différents serveurs et cuisiniers peuvent retrouver l'historique des commandes et voir si elles ont été servies et payées, c'est à eux de changer leurs états sur la page de l'historique. Les serveurs doivent aussi montrer la page concernant le RGPD aux clients avant de prendre leurs commandes. +
+
+== Première phase
+
 == Diagrammes
 
 === Diagramme des cas d'utilisation
@@ -104,3 +110,301 @@ Ensuite elle contient un tableau de BoxesCommande (les plateaux qui composent la
 la quantité d'un type de panier et le prix total du type de panier)
 Et pour finir le prix total de la commande.
 
+== Deuxième phase
+
+== Affichage des plateaux
+
+Tout d'abord, nous devons relier l'application à l'api pour cela on utilise un service. +
+sushi.service.ts :
+----
+import { Injectable } from '@angular/core';
+import { Observable, of, throwError } from 'rxjs';
+import { Boxe } from 'src/app/model/interfaces/boxe';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import { GlobalConstants } from 'src/app/global-constants';
+import { catchError } from 'rxjs/operators';
+
+
+@Injectable({
+  providedIn: 'root'
+})
+export class SushiService {
+
+  httpHeader = {
+    headers: new HttpHeaders({
+    'Content-Type': 'application/json'
+    })
+    } 
+
+  constructor(private httpClient: HttpClient) { }
+
+  getBoxes(): Observable<any> {
+    return this.httpClient.get<Boxe>(this.getBaseUrl() + "/boxes");
+  }
+
+  getBaseUrl() : string {                                  
+    return GlobalConstants.sushiAPI;
+  }
+
+  private handleError(error: HttpErrorResponse): any {
+    if (error.error instanceof ErrorEvent) {
+    console.error('An error occurred:', error.error.message);
+    } else {
+    console.error(
+    `Backend returned code ${error.status}, ` +
+    `body was: ${error.error}`);
+    }
+    return throwError(() => 'Something bad happened; please try again later.');
+    }
+    
+
+}
+----
+
+C'est le code légèrement modifié du TD CRUD de M.Chamillard. +
+On immporte l'interface Boxe et GlobalConstants pour sushiAPI qui contient le lien vers l'API. +
+Pour récupérer les boxes, on envoie des requêtes HTML avec la fonction getBoxes() pour récupérer des objets de type Boxe. +
+Les interfaces Boxe et Ingrédient:
+----
+import { Ingredient } from "./ingredient";
+export interface Boxe {
+    id: number,
+    nom: string,
+    pieces: number,
+    composition: Ingredient[],
+    saveurs: string[],
+    prix: number,
+    image: string
+}
+----
+
+----
+export interface Ingredient {
+  nom : string,
+  quantite : number
+}
+
+----
+GlobalConstants:
+----
+export class GlobalConstants {
+    static readonly sushiAPI : string  = "http://localhost:3000";
+}
+----
+
+Ce service est utilisé par le composant BoxeComponent comme c'est lui qui s'occupe d'afficher les boxes. +
+BoxesComponents:
+----
+(mettre le code complété de BoxesComponent)
+----
+Après avoir importé SushiService, on crée un tableau vide: boxes. +
+Ensuite on crée la fonction fetchBoxes() qui appele le service pour envoyer une requête HTTP à l'API pour récupérer les boxes et les mettre dans le tableau boxes. +
+Comme nous devons voir les boxes au lancement de la page, on fait this.fetchBoxes() dans le ngOnInit(). +
+
+Voici le code qui affiche les boxes dans le boxes.component.html et son UI:
+----
+<div fxLayout="row wrap">
+    <div fxFlex.gt-xs="30%" *ngFor="let item of boxes; let index = index">
+        <hr>
+        <div class="has-text-centered">{{item.nom}}</div>
+
+        <img [src]="'assets/'+item.image+'.webp'"><br />
+
+        <div class="has-text-centered">
+            <button class="button is-link" (click)="plus(index)">+</button>&nbsp;
+            <button class="button is-link" (click)="affModal(index)">Détails</button>&nbsp;
+            <button class="button is-link" (click)="moins(index)">-</button>
+        </div>
+    </div>
+</div>
+----
+(METTRE LE SCREEN DE L'UI). +
+On utilise le module Flex-layout pour bien placé les différentes boxes et la commande ainsi que Bulma pour rendre l'interface plus jolie. +
+Pour afficher chaque boxe, on fait un ngFor du tableau boxes pour répeter le code qui suit plusieurs fois pour afficher les plateaux et un index qui est pratique pour des fonctions que nous verrons plus tard. +
+Ainsi, nous pouvons afficher le nom et l'image de chaque boxe de sushi. +
+
+== Affichage des détails des plateaux
+
+Vous avez pu voir que dans l'affichage des boxes, il y a une ligne qui affiche le bouton "Détails" et qui quand on clique dessus, appele la fonction affmodal(index). +
+Cette fonction permet d'afficher grâce à un modal, les détails du plateau sélectionné avec l'index du ngFor. +
+Revoyons le code de affmodal(index) dans boxes.component.ts: 
+----
+boxe: Boxe = {
+    id: 0,
+    nom: '',
+    pieces: 0,
+    composition: [],
+    saveurs: [],
+    prix: 0.0,
+    image: ''
+  };
+  
+showModal: boolean = false;
+
+affModal(i: number) {
+    if (this.showModal) {
+      this.showModal = false;
+    } else {
+      console.log("Modal indice :" + i);
+      console.log("Modal nom plateau :" + this.boxes[i].nom);
+      this.boxe = this.boxes[i];
+      this.showModal = true;
+    }
+  }
+----
+Comme au départ, showmodal est false, on passe direct au else. +
+Mise appart les logs dans la console pour vérifier qu'il prend bien le bon plateau, il prend la boxe de l'index dans boxes et l'attribut à l'objet boxe. +
+Puis il met showModal en true pour que le modal s'affiche coté UI grâce à un ngIf que nous pouvons voir maintenant:
+
+----
+<div class="modal is-active" *ngIf="showModal">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <h1 class="title is-3" style="color:azure;">{{boxe.nom}}</h1>
+            <p style="color:yellow;">Nombre de pièces : {{boxe.pieces}}</p>
+            <p style="color:yellow;">Composition :</p>
+            <ul>
+                <li style="color:yellow;" *ngFor="let composition of boxe.composition">{{composition.quantite}}
+                    {{composition.nom}}
+                </li>
+            </ul>
+            <p style="color:yellow;">Saveurs :</p>
+            <p style="color:yellow;">{{boxe.saveurs}},</p>
+            <p style="color:yellow;">Prix : {{boxe.prix}}€</p>
+            <img [src]="'assets/'+boxe.image+'.webp'"><br>
+
+            <br>
+            <button class="button is-primary" (click)="affModal(0)">Fermer</button>
+        </div>
+    </div>
+----
+Comme showModal est true, le test réussi et affiche donc les détails de la boxe dans l'objet boxe qui a été affecté par la fonction affModal(index). +
+Cependant, pour afficher la composition, on doit refaire un ngFor comme c'est un tableau d'objets. +
+
+Voici ce que donne l'UI:
+(METTRE SCREEN) +
+
+A la fin du modal, il y a un bouton qui active affModal() mais avec comme paramètre 0. +
+Cela permet de réussir le premier id de la fonction comme showModal est true et donc ça le remet en false et ne passe plus le test du ngif. +
+
+== Le panier
+
+Le panier contient les boxes sélectionnées avec leurs images, leurs noms, la quantité et le prix d'un type de boxe mltiplié par sa quantité. +
+Le panier a, à la toute fin, le prix total de la commande et un formulaire demandant le nom du client pour enregistrer la commande à son nom. +
+(METTRE SCREENS UI AVEC PANIER VIDE ET PANIER PLEIN)
+
+Pour remplir le panier, il faut cliquer sur le bouton + se trouvant sous chaque plateau pour appeler la plus(index) qui reprend l'index de la boxe sélectionnées. +
+Dans boxes.component.ts:
+----
+commandes: LigneCommande[];
+totalCommande: number = 0.0;
+
+plus(index: number) {
+    const nomsBoxesCommandees = this.commandes.map(value => value.nomPlateau);
+    const panier: any | Map<string, number> = new Map();
+    nomsBoxesCommandees.forEach(nomBoxeCommandee => (panier.set(nomBoxeCommandee, (panier.get(nomBoxeCommandee) || 0) + 1)))
+    if (panier.get(this.boxes[index].nom) == 1) {
+      for (let i = 0; i < this.commandes.length; i++) {
+        if (this.commandes[i].nomPlateau == this.boxes[index].nom) {
+          this.commandes[i].quantite++;
+          this.commandes[i].prix = this.commandes[i].quantite * this.boxes[index].prix;
+          this.commandes[i].prix = Math.round(1000 * this.commandes[i].prix) / 1000;
+        }
+      }
+    }
+    else {
+      // let numCommande = Math.floor(Math.random() * (99 + 1));
+      let uneLigne = new LigneCommande(this.boxes[index].image, this.boxes[index].nom, 1, this.boxes[index].prix);
+      this.commandes.push(uneLigne);
+    }
+    this.totalCommande = (this.totalCommande + this.boxes[index].prix);
+    this.totalCommande = Math.round(1000 * this.totalCommande) / 1000;
+  }
+----
+----
+export class LigneCommande {
+    constructor(
+        public image: string,
+        public nomPlateau: string,
+        public quantite: number,
+        public prix: number
+    ) { }
+}
+----
+(EXPLIQUER !!!!)
+
+Le bouton moins retire un élément du panier ou retire de 1 la quantité d'un élément s'il s'y trouve plusieurs fois. +
+----
+moins(index: number) {
+    const nomsBoxesCommandees = this.commandes.map(value => value.nomPlateau);
+    const panier: any | Map<string, number> = new Map();
+    nomsBoxesCommandees.forEach(nomBoxeCommandee => (panier.set(nomBoxeCommandee, (panier.get(nomBoxeCommandee) || 0) + 1)))
+    if (panier.get(this.boxes[index].nom) == 1) {
+      for (let i = 0; i < this.commandes.length; i++) {
+        if (this.commandes[i].nomPlateau == this.boxes[index].nom && this.commandes[i].quantite > 0) {
+          this.commandes[i].quantite--;
+          this.commandes[i].prix = this.commandes[i].quantite * this.boxes[index].prix;
+          this.commandes[i].prix = Math.round(1000 * this.commandes[i].prix) / 1000;
+        }
+        console.log(this.commandes);
+        if (this.commandes[i].quantite == 0) {
+          this.commandes.splice(i, 1);
+        }
+        console.log(this.commandes);
+      }
+      this.totalCommande = this.totalCommande - this.boxes[index].prix;
+      this.totalCommande = Math.round(1000 * this.totalCommande) / 1000;
+    }
+    console.log("Moins :" + index);
+  }
+----
+Le code est presque pareil que plus() mais avec quelques tests en plus comme vérifier si la quantité est supérieur à 0, si oui on diminue la quantité de 1 et on recalcule le prix. +
+Puis si la quantité devient 0, on supprime l'élément de la commande et on remodifie le prix total de la commande. +
+
+Passons maintenant à l'affichage du panier.
+boxes.component.html:
+----
+<div fxFlex.gt-xs="30%">
+            <h1 class="title is-3">Commande</h1>
+            <table class="table is-striped center">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Plateau</th>
+                        <th>Quantite</th>
+                        <th>Prix</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let elem of commandes; let index = index">
+                        <td><img [src]="'assets/'+elem.image+'.webp'"></td>
+                        <td>{{elem.nomPlateau}}</td>
+                        <td>{{elem.quantite}}</td>
+                        <td>{{elem.prix}}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div style="font-weight:bold;">Total Commande : {{ totalCommande }}</div>
+            <form [formGroup]="commandeForm" (ngSubmit)="commander()">
+                <div class="field">
+                    <div class="control">
+                        <input class="input is-link" formControlName="client" type="text" placeholder="nom client" value="">
+                    </div>
+                </div>
+                <div class="field is-grouped">
+                    <div class="control">
+                        <button class="button is-link">Commander</button>
+                    </div>
+                </div>
+            </form>
+----
+Nous avons encore du flex-layout et bulma pour la mise en page. +
+Le panier est dans un tableau qui pour chaque type de boxe, aura une colonne image, nom, quantité et prix. +
+Pour afficher chaque ligne de la commande, on utilise à nouveau ngFor sur le tableau commandes. +
+Ensuite nous avons une ligne qui affiche le nombre de la variable totalCommande. +
+
+Et pour finir, un formulaire avec formGroup pour demander le nom du client (c'est précisé dans le input avec le paramètre placeholder). +
+Quand le serveur appuiera sur le bouton Commander, ça activera la fonction commander() grâce au ngSubmit. +
+Il enregistrera aussi le nom du client dans l'objet FormGroup commandeForm en tant qu'objet FormControl client. +
+La méthode commander() enregistrera la commande avec le nom du client dans le localstorage. +
