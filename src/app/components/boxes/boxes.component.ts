@@ -60,11 +60,6 @@ export class BoxesComponent implements OnInit {
   }
 
   plus(index: number) {
-    // Exemple d'affectation
-    // let uneLigne = new LigneCommande(this.boxes[index].image, this.boxes[index].nom, 1, this.boxes[index].prix);
-    // this.commandes.push(uneLigne);
-    // console.log("Plus :" + index + this.boxes[index].nom);
-
     const nomsBoxesCommandees = this.commandes.map(value => value.nomPlateau);
     const panier: any | Map<string, number> = new Map();
     nomsBoxesCommandees.forEach(nomBoxeCommandee => (panier.set(nomBoxeCommandee, (panier.get(nomBoxeCommandee) || 0) + 1)))
@@ -78,7 +73,7 @@ export class BoxesComponent implements OnInit {
       }
     }
     else {
-      // let numCommande = Math.floor(Math.random() * (99 + 1));
+      let numCommande = Math.floor(Math.random() * (99 + 1));
       let uneLigne = new LigneCommande(this.boxes[index].image, this.boxes[index].nom, 1, this.boxes[index].prix);
       this.commandes.push(uneLigne);
     }
